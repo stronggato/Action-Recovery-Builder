@@ -236,7 +236,17 @@ jobs:
           export USE_RECOVERY_INSTALLER=true
           export RECOVERY_INSTALLER_PATH=bootable/recovery/installer
         fi
-        lunch twrp_${{ inputs.DEVICE_NAME }}-eng && make $(tr -d _ <<< ${{ inputs.BUILD_TARGET }})image -j$(nproc --all)
+        lunch twrp_${{ inputs.DEVICE_NAME }}-eng
+        # TWRP 12.1 has NO 'vendor_bootimage' make goal. With
+        # BOARD_MOVE_RECOVERY_RESOURCES_TO_VENDOR_BOOT=true the recovery
+        # resources are built into the vendor ramdisk and vendor_boot.img is
+        # only reachable as a file target, so build the file path directly.
+        if [ "${{ inputs.BUILD_TARGET }}" = "vendor_boot" ]; then
+          make recoveryimage -j$(nproc --all)
+          make "$OUT_DIR/target/product/${{ inputs.DEVICE_NAME }}/vendor_boot.img" -j$(nproc --all)
+        else
+          make $(tr -d _ <<< ${{ inputs.BUILD_TARGET }})image -j$(nproc --all)
+        fi
       working-directory: workspace
 
     - name: Building recovery (Omni)
