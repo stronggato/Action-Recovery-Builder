@@ -53,6 +53,8 @@ on:
 jobs:
   build:
     if: github.event.repository.owner.id == github.event.sender.id
+    permissions:
+      contents: write
     runs-on: ubuntu-22.04
     # You can use either of the ubuntu-20.04 or ubuntu-22.04 runner
     steps:
