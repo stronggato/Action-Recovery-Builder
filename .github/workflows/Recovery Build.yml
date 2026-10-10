@@ -243,7 +243,7 @@ jobs:
         # only reachable as a file target, so build the file path directly.
         if [ "${{ inputs.BUILD_TARGET }}" = "vendor_boot" ]; then
           make recoveryimage -j$(nproc --all)
-          make "$OUT_DIR/target/product/${{ inputs.DEVICE_NAME }}/vendor_boot.img" -j$(nproc --all)
+          make "${OUT_DIR:-out}/target/product/${{ inputs.DEVICE_NAME }}/vendor_boot.img" -j$(nproc --all)
         else
           make $(tr -d _ <<< ${{ inputs.BUILD_TARGET }})image -j$(nproc --all)
         fi
